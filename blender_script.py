@@ -3,7 +3,7 @@ degree = 3
 import bpy
 import sys
 sys.path.append('/home/lars/src/NURBS/')
-from interface import *
+import interface
 
 control_poly = bpy.data.meshes['Control']
 samples_poly = bpy.data.meshes['Samples']
@@ -11,7 +11,7 @@ samples_poly = bpy.data.meshes['Samples']
 num_control = len(control_poly.vertices)
 num_samples = len(samples_poly.vertices)
 
-sc = SimpleCircle()
+sc = interface.SimpleCircle()
 sc.degree(degree)
 
 control = sc.control(num_control)
@@ -22,7 +22,7 @@ for v in control_poly.vertices:
     control[i*3 + 2] = v.co.z
     i += 1
 
-samples = sc.samples()
+samples = sc.samples(num_samples)
 i = 0
 for v in samples_poly.vertices:
     v.co.x = samples[i*3 + 0]

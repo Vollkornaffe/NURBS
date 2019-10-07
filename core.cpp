@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <math.h>
 #include <Eigen/Dense>
+
+#define PI 3.14159265
 
 using Vector = Eigen::Vector3d;
 
@@ -36,7 +39,11 @@ private:
 
   void compute_samples() {
     for (size_t i = 0; i < samples.size(); i++) {
-      // actually compute something
+      double t = static_cast<double>(i)/static_cast<double>(samples.size());
+
+      samples[i][0] = t;
+      samples[i][1] = sin(2.0*PI*t);
+      samples[i][2] = 2.0*cos(2.0*PI*t);
     }
   }
 

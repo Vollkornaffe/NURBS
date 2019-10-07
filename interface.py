@@ -1,4 +1,4 @@
-from ctypes import cdll, c_double, c_void_p, c_size_t, POINTER
+from ctypes import cdll, c_double, c_void_p, c_size_t, POINTER, c_int
 
 lib = cdll.LoadLibrary('/home/lars/src/NURBS/core.so')
 
