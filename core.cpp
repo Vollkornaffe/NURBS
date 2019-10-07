@@ -1,20 +1,30 @@
 #include <iostream>
 #include <vector>
+#include <Eigen/Dense>
 
-class Foo {
-  public:
-    void bar() {
-      std::cout << "Hello" << std::endl;
-    }
-    double * test() {
-      return asdf.data();
-    }
+using Vector = Eigen::Vector3d;
 
-    std::vector<double> asdf = { 1.0, 2.0, 3.0, 4.0, };
+class SimpleCircle {
+public:
+
+  double* get_control(size_t n) {
+    if (n == 0) return nullptr;
+    control.resize(n);
+
+    control[0] = Vector({1., 1., 1.});
+    control[1] = Vector({2., 2., 2.});
+    control[2] = Vector({3., 3., 3.});
+
+    return control[0].data();
+  }
+
+private:
+
+  std::vector<Vector> control;
+
 };
 
 extern "C" {
-  Foo* Foo_new() { return new Foo(); }
-  void Foo_bar(Foo* foo) { foo->bar(); }
-  double * Foo_test(Foo* foo) { return foo->test(); }
+  SimpleCircle* SC_construct() { return new SimpleCircle(); }
+  double * SC_get_control(SimpleCircle* sc, size_t n) { return sc->get_control(n); }
 }
