@@ -5,27 +5,28 @@ import sys
 sys.path.append('/home/lars/src/NURBS/')
 import interface
 
-control_poly = bpy.data.meshes['Control']
-samples_poly = bpy.data.meshes['Samples']
+controlPoly = bpy.data.meshes['Control']
+samplesPoly = bpy.data.meshes['Samples']
 
-num_control = len(control_poly.vertices)
-num_samples = len(samples_poly.vertices)
+numControl = len(controlPoly.vertices)
+numSamples = len(samplesPoly.vertices)
 
-sc = interface.SimpleCircle()
-sc.degree(degree)
+sc_ptr = interface.SimpleCircle(1,numControl,numSamples)
 
-control = sc.control(num_control)
+control_ptr = sc_ptr.control()
 i = 0
-for v in control_poly.vertices:
-    control[i*3 + 0] = v.co.x
-    control[i*3 + 1] = v.co.y
-    control[i*3 + 2] = v.co.z
+for v in controlPoly.vertices:
+    control_ptr[i*3 + 0] = v.co.x
+    control_ptr[i*3 + 1] = v.co.y
+    control_ptr[i*3 + 2] = v.co.z
     i += 1
 
-samples = sc.samples(num_samples)
+samples_ptr = sc_ptr.samples()
 i = 0
-for v in samples_poly.vertices:
-    v.co.x = samples[i*3 + 0]
-    v.co.y = samples[i*3 + 1]
-    v.co.z = samples[i*3 + 2]
+for v in samplesPoly.vertices:
+    v.co.x = samples_ptr[i*3 + 0]
+    v.co.y = samples_ptr[i*3 + 1]
+    v.co.z = samples_ptr[i*3 + 2]
     i += 1
+
+samplesPoly.update()
