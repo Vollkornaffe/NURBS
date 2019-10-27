@@ -21,7 +21,7 @@ def init_nurbs(degree = 3):
     numControl = len(bpy.data.meshes['Control'].vertices)
     numSamples = len(bpy.data.meshes['Samples'].vertices)
 
-    return CircularNURBS_interface.SimpleCircle(degree,numControl,numSamples)
+    return CircularNURBS_interface.CircularCurve(degree,numControl,numSamples)
 
 def update(sc_ptr):
 

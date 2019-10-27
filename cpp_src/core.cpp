@@ -24,10 +24,10 @@ struct CVector {
   std::vector<T> vector;
 };
 
-class SimpleCircle {
+class CircularCurve {
 public:
 
-  SimpleCircle(size_t degree, size_t numControl, size_t numSamples)
+  CircularCurve(size_t degree, size_t numControl, size_t numSamples)
   : degree(degree), numControl(numControl), numSamples(numSamples) {
 
     if (numControl < 3 || degree+1 > numControl) {
@@ -116,14 +116,14 @@ private:
 };
 
 extern "C" {
-  SimpleCircle* SC_construct(size_t degree, size_t numControl, size_t numSamples) {
+  CircularCurve* SC_construct(size_t degree, size_t numControl, size_t numSamples) {
     try {
-      return new SimpleCircle(degree, numControl, numSamples);
+      return new CircularCurve(degree, numControl, numSamples);
     } catch (...)  {
       return nullptr;
     }
   }
-  double * SC_get_intervals(SimpleCircle* sc) { return sc->get_intervals(); }
-  double * SC_get_control(SimpleCircle* sc) { return sc->get_control(); }
-  double * SC_get_samples(SimpleCircle* sc) { return sc->get_samples(); }
+  double * SC_get_intervals(CircularCurve* sc) { return sc->get_intervals(); }
+  double * SC_get_control(CircularCurve* sc) { return sc->get_control(); }
+  double * SC_get_samples(CircularCurve* sc) { return sc->get_samples(); }
 }

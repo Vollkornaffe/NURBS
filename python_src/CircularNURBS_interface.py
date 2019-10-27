@@ -14,7 +14,7 @@ lib.SC_get_control.restype = POINTER(c_double)
 lib.SC_get_samples.argtypes = [c_void_p]
 lib.SC_get_samples.restype = POINTER(c_double)
 
-class SimpleCircle(object):
+class CircularCurve(object):
     def __init__(self, degree, numControl, numSamples):
         self.obj = lib.SC_construct(degree, numControl, numSamples)
 
