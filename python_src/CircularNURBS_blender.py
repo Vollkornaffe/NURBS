@@ -15,6 +15,9 @@ def init_poly(numControl = 4, numSamples = 1000):
 
 def init_nurbs(degree = 3):
 
+    bpy.ops.object.editmode_toggle()
+    bpy.ops.object.editmode_toggle()
+
     numControl = len(bpy.data.meshes['Control'].vertices)
     numSamples = len(bpy.data.meshes['Samples'].vertices)
 
@@ -34,7 +37,6 @@ def update(sc_ptr):
     control_ptr = sc_ptr.control()
     i = 0
     for v in controlPoly.vertices:
-        print(v.co)
         control_ptr[i*3 + 0] = v.co.x
         control_ptr[i*3 + 1] = v.co.y
         control_ptr[i*3 + 2] = v.co.z
