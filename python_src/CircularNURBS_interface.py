@@ -1,6 +1,6 @@
 from ctypes import cdll, c_double, c_void_p, c_size_t, POINTER, c_int
 
-lib = cdll.LoadLibrary('/home/lars/src/NURBS/core.so')
+lib = cdll.LoadLibrary('libCircularNURBS.so')
 
 lib.SC_construct.argtypes = [c_size_t, c_size_t, c_size_t]
 lib.SC_construct.restype = c_void_p
