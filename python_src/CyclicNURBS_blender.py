@@ -2,7 +2,7 @@ import bpy
 
 import CyclicNURBS_interface
 
-def init_poly_curve(numControl = 4, numSamples = 1000):
+def init_poly_curve(curveData):
 
     if ("Control" in bpy.data.objects):
         bpy.data.objects.remove(bpy.data.objects["Control"])
@@ -13,14 +13,14 @@ def init_poly_curve(numControl = 4, numSamples = 1000):
     if ("Samples" in bpy.data.meshes):
         bpy.data.meshes.remove(bpy.data.meshes["Samples"])
 
-    bpy.ops.mesh.primitive_circle_add(vertices=numControl, radius=1, enter_editmode=False, location=(0, 0, 0))
+    bpy.ops.mesh.primitive_circle_add(vertices=curveData.numControl, radius=1, enter_editmode=False)
     bpy.context.object.name = "Control"
     bpy.context.object.data.name = "Control"
-    bpy.ops.mesh.primitive_circle_add(vertices=numSamples, radius=1, enter_editmode=False, location=(0, 0, 0))
+    bpy.ops.mesh.primitive_circle_add(vertices=curveData.numSamples, radius=1, enter_editmode=False)
     bpy.context.object.name = "Samples"
     bpy.context.object.data.name = "Samples"
 
-def init_poly_surface(u_numControl = 4, v_numControl = 4, u_numSamples = 100, v_numSamples = 100):
+def init_poly_surface(surfaceData):
 
     if ("Control" in bpy.data.objects):
         bpy.data.objects.remove(bpy.data.objects["Control"])
@@ -31,7 +31,7 @@ def init_poly_surface(u_numControl = 4, v_numControl = 4, u_numSamples = 100, v_
     if ("Samples" in bpy.data.meshes):
         bpy.data.meshes.remove(bpy.data.meshes["Samples"])
 
-    bpy.ops.mesh.primitive_torus_add(major_segments=u_numControl, minor_segments=v_numControl, major_radius=2, minor_radius=1)
+    bpy.ops.mesh.primitive_torus_add(major_segments=surfaceData.u_numControl, minor_segments=surfaceData.v_numControl, major_radius=2, minor_radius=1, enter_editmode=False)
     bpy.ops.object.editmode_toggle()
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.delete(type='ONLY_FACE')
@@ -39,7 +39,7 @@ def init_poly_surface(u_numControl = 4, v_numControl = 4, u_numSamples = 100, v_
     bpy.context.object.name = "Control"
     bpy.context.object.data.name = "Control"
 
-    bpy.ops.mesh.primitive_torus_add(major_segments=u_numSamples, minor_segments=v_numSamples, major_radius=2, minor_radius=1)
+    bpy.ops.mesh.primitive_torus_add(major_segments=surfaceData.u_numSamples, minor_segments=surfaceData.v_numSamples, major_radius=2, minor_radius=1, enter_editmode=False)
     bpy.ops.object.editmode_toggle()
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.delete(type='ONLY_FACE')
@@ -47,17 +47,21 @@ def init_poly_surface(u_numControl = 4, v_numControl = 4, u_numSamples = 100, v_
     bpy.context.object.name = "Samples"
     bpy.context.object.data.name = "Samples"
 
-def init_nurbs(degree = 3):
+def init_nurbs_curve(curveData):
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
 
-    numControl = len(bpy.data.meshes['Control'].vertices)
-    numSamples = len(bpy.data.meshes['Samples'].vertices)
+    return CyclicNURBS_interface.CyclicCurve(curveData)
 
-    return CyclicNURBS_interface.CircularCurve(degree, numControl, numSamples)
+def init_nurbs_surface(surfaceData):
 
-def update(sc_ptr):
+    bpy.ops.object.editmode_toggle()
+    bpy.ops.object.editmode_toggle()
+
+    return CyclicNURBS_interface.CyclicSurface(surfaceData)
+
+def update_curve(curveData, cc_ptr):
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
@@ -65,23 +69,44 @@ def update(sc_ptr):
     controlPoly = bpy.data.meshes['Control']
     samplesPoly = bpy.data.meshes['Samples']
 
-    numControl = len(controlPoly.vertices)
-    numSamples = len(samplesPoly.vertices)
-
-    control_ptr = sc_ptr.control()
-    i = 0
-    for v in controlPoly.vertices:
+    control_ptr = cc_ptr.control()
+    for i in range(0, curveData.numControl):
+        v = controlPoly.vertices[i]
         control_ptr[i*3 + 0] = v.co.x
         control_ptr[i*3 + 1] = v.co.y
         control_ptr[i*3 + 2] = v.co.z
-        i += 1
 
-    samples_ptr = sc_ptr.samples()
-    i = 0
-    for v in samplesPoly.vertices:
+    samples_ptr = cc_ptr.samples()
+    for i in range(0, curveData.numSamples):
+        v = samplesPoly.vertices[i]
         v.co.x = samples_ptr[i*3 + 0]
         v.co.y = samples_ptr[i*3 + 1]
         v.co.z = samples_ptr[i*3 + 2]
-        i += 1
+
+    samplesPoly.update()
+
+def update_surface(surfaceData, cs_ptr):
+
+    bpy.ops.object.editmode_toggle()
+    bpy.ops.object.editmode_toggle()
+
+    controlPoly = bpy.data.meshes['Control']
+    samplesPoly = bpy.data.meshes['Samples']
+
+    for j in range(0, surfaceData.u_numControl):
+        control_ptr = cs_ptr.control(j)
+        for i in range(0, surfaceData.v_numControl):
+            v = controlPoly.vertices[i + j * surfaceData.v_numControl]
+            control_ptr[i*3 + 0] = v.co.x
+            control_ptr[i*3 + 1] = v.co.y
+            control_ptr[i*3 + 2] = v.co.z
+
+    samples_ptr = cs_ptr.samples()
+    for j in range(0, surfaceData.u_numControl):
+        for i in range(0, surfaceData.v_numControl):
+            v = controlPoly.vertices[i + j * surfaceData.v_numControl]
+            v.co.x = samples_ptr[(i + j * surfaceData.v_numControl)*3 + 0]
+            v.co.y = samples_ptr[(i + j * surfaceData.v_numControl)*3 + 1]
+            v.co.z = samples_ptr[(i + j * surfaceData.v_numControl)*3 + 2]
 
     samplesPoly.update()

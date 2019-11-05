@@ -1,17 +1,20 @@
 import sys
 sys.path.append("@CMAKE_INSTALL_PREFIX@/CyclicNURBS")
 
-import CyclicNURBS_blender
-import CyclicNURBS_interface
 import CyclicNURBS_path
+import CyclicNURBS_data
+import CyclicNURBS_interface
+import CyclicNURBS_blender
 
 from importlib import reload
 
-reload(CyclicNURBS_blender  )
-reload(CyclicNURBS_interface)
 reload(CyclicNURBS_path     )
+reload(CyclicNURBS_data     )
+reload(CyclicNURBS_interface)
+reload(CyclicNURBS_blender  )
 
-CyclicNURBS_blender.init_poly(10,1000)
-CyclicNURBS_blender.update(CyclicNURBS_blender.init_nurbs())
+curveData = CyclicNURBS_data.CurveData()
 
-print(CyclicNURBS_path.binary_path)
+CyclicNURBS_blender.init_poly_curve(curveData)
+nurbs_curve_ptr = CyclicNURBS_blender.init_nurbs_curve(curveData)
+CyclicNURBS_blender.update_curve(curveData, nurbs_curve_ptr)

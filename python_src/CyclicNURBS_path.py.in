@@ -1,1 +1,2 @@
 binary_path =  '@CMAKE_INSTALL_PREFIX@/CyclicNURBS/libCyclicNURBS.so.@RELOAD_COUNTER@'
+print(binary_path)

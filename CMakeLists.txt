@@ -23,6 +23,7 @@ configure_file(python_src/CyclicNURBS_path.py.in CyclicNURBS_path.py @ONLY)
 install(FILES
   ${CMAKE_SOURCE_DIR}/python_src/CyclicNURBS_blender.py
   ${CMAKE_SOURCE_DIR}/python_src/CyclicNURBS_interface.py
+  ${CMAKE_SOURCE_DIR}/python_src/CyclicNURBS_data.py
   ${CMAKE_BINARY_DIR}/CyclicNURBS_path.py
   ${CMAKE_BINARY_DIR}/CyclicNURBS.py
   DESTINATION ${CMAKE_INSTALL_PREFIX}/CyclicNURBS

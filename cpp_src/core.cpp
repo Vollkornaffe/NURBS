@@ -145,9 +145,8 @@ private:
 
 };
 
-
-/*
 class CyclicSurface {
+public:
 
   CyclicSurface(
     size_t u_degree, size_t v_degree,
@@ -157,32 +156,41 @@ class CyclicSurface {
     u_numControl(u_numControl), v_numControl(v_numControl),
     u_numSamples(u_numSamples), v_numSamples(v_numSamples) {
 
-    if (numControl < 3 || degree+1 > numControl) {
+    if (u_numControl < 3 || u_degree+1 > u_numControl
+    ||  v_numControl < 3 || v_degree+1 > v_numControl) {
       throw std::invalid_argument("Number of controlpoints MUST be larger or equal degree.");
     }
 
-    if (numSamples < 1) {
+    if (u_numSamples < 1 || v_numSamples < 1) {
       throw std::invalid_argument("At least one sample.");
     }
 
-    intervals.vector.resize(numControl, 1.0/static_cast<double>(numControl));
-    control.vector.resize(numControl);
+    u_intervals.vector.resize(u_numControl, 1.0/static_cast<double>(u_numControl));
+    v_intervals.vector.resize(v_numControl, 1.0/static_cast<double>(v_numControl));
 
-    samples.resize(numSamples);
+    uv_control.vector.resize(u_numControl);
+    for (auto& cvector : uv_control.vector) {
+      cvector.vector.resize(v_numControl);
+    }
+
+    uv_samples.resize(u_numSamples*v_numSamples);
 
   }
 
-  double* get_control() {
-    return control.vector[0].data();
+  double* get_control(size_t n) {
+    return uv_control.vector[n].vector[0].data();
   }
 
-  double* get_intervals() {
-    return intervals.vector.data();
+  double* get_u_intervals() {
+    return u_intervals.vector.data();
+  }
+  double* get_v_intervals() {
+    return v_intervals.vector.data();
   }
 
   double* get_samples() {
     compute_samples();
-    return samples[0].data();
+    return uv_samples[0].data();
   }
 
 
@@ -191,6 +199,7 @@ private:
   // Most of this algorithm is inspired by The NURBS Book, Algorithm A2.2
   void compute_samples() {
 
+  /*
     size_t s = 0;
     size_t u_i = 0;
     size_t v_i = 0;
@@ -228,6 +237,8 @@ private:
         s++;
       }
     }
+
+   */
   }
 
   size_t u_degree;
@@ -246,7 +257,6 @@ private:
   std::vector<Vector> uv_samples;
 
 };
- */
 
 extern "C" {
   CyclicCurve* CC_construct(size_t degree, size_t numControl, size_t numSamples) {
@@ -260,7 +270,6 @@ extern "C" {
   double * CC_get_control(CyclicCurve* cc) { return cc->get_control(); }
   double * CC_get_samples(CyclicCurve* cc) { return cc->get_samples(); }
 
-/*
   CyclicSurface* CS_construct(size_t u_degree, size_t v_degree, size_t u_numControl, size_t v_numControl, size_t u_numSamples, size_t v_numSamples) {
     try {
       return new CyclicSurface(u_degree, v_degree, u_numControl, v_numControl, u_numSamples, v_numSamples);
@@ -272,5 +281,4 @@ extern "C" {
   double * CS_get_v_intervals(CyclicSurface* cs) { return cs->get_v_intervals(); }
   double * CS_get_n_control(CyclicSurface* cs, size_t n) { return cs->get_control(n); }
   double * CS_get_samples(CyclicSurface* cs) { return cs->get_samples(); }
-  */
 }
