@@ -92,7 +92,7 @@ public:
     intervals.vector.resize(numControl, 1.0/static_cast<double>(numControl));
     control.vector.resize(numControl);
 
-    samples.resize(numSamples);
+    samples.resize(numSamples, Vector::Zero());
 
   }
 
@@ -173,7 +173,7 @@ public:
       cvector.vector.resize(v_numControl);
     }
 
-    uv_samples.resize(u_numSamples*v_numSamples);
+    uv_samples.resize(u_numSamples*v_numSamples, Vector::Zero());
 
   }
 

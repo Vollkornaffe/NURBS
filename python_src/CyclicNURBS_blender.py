@@ -31,7 +31,7 @@ def init_poly_surface(surfaceData):
     if ("Samples" in bpy.data.meshes):
         bpy.data.meshes.remove(bpy.data.meshes["Samples"])
 
-    bpy.ops.mesh.primitive_torus_add(major_segments=surfaceData.u_numControl, minor_segments=surfaceData.v_numControl, major_radius=2, minor_radius=1, enter_editmode=False)
+    bpy.ops.mesh.primitive_torus_add(major_segments=surfaceData.u_numControl, minor_segments=surfaceData.v_numControl, major_radius=2, minor_radius=1)
     bpy.ops.object.editmode_toggle()
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.delete(type='ONLY_FACE')
@@ -39,7 +39,7 @@ def init_poly_surface(surfaceData):
     bpy.context.object.name = "Control"
     bpy.context.object.data.name = "Control"
 
-    bpy.ops.mesh.primitive_torus_add(major_segments=surfaceData.u_numSamples, minor_segments=surfaceData.v_numSamples, major_radius=2, minor_radius=1, enter_editmode=False)
+    bpy.ops.mesh.primitive_torus_add(major_segments=surfaceData.u_numSamples, minor_segments=surfaceData.v_numSamples, major_radius=2, minor_radius=1)
     bpy.ops.object.editmode_toggle()
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.delete(type='ONLY_FACE')
@@ -102,11 +102,11 @@ def update_surface(surfaceData, cs_ptr):
             control_ptr[i*3 + 2] = v.co.z
 
     samples_ptr = cs_ptr.samples()
-    for j in range(0, surfaceData.u_numControl):
-        for i in range(0, surfaceData.v_numControl):
-            v = controlPoly.vertices[i + j * surfaceData.v_numControl]
-            v.co.x = samples_ptr[(i + j * surfaceData.v_numControl)*3 + 0]
-            v.co.y = samples_ptr[(i + j * surfaceData.v_numControl)*3 + 1]
-            v.co.z = samples_ptr[(i + j * surfaceData.v_numControl)*3 + 2]
+    for j in range(0, surfaceData.u_numSamples):
+        for i in range(0, surfaceData.v_numSamples):
+            v = samplesPoly.vertices[i + j * surfaceData.v_numSamples]
+            v.co.x = samples_ptr[(i + j * surfaceData.v_numSamples)*3 + 0]
+            v.co.y = samples_ptr[(i + j * surfaceData.v_numSamples)*3 + 1]
+            v.co.z = samples_ptr[(i + j * surfaceData.v_numSamples)*3 + 2]
 
     samplesPoly.update()

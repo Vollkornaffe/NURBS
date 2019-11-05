@@ -13,8 +13,14 @@ reload(CyclicNURBS_data     )
 reload(CyclicNURBS_interface)
 reload(CyclicNURBS_blender  )
 
-curveData = CyclicNURBS_data.CurveData()
+#curveData = CyclicNURBS_data.CurveData()
+#
+#CyclicNURBS_blender.init_poly_curve(curveData)
+#nurbs_curve_ptr = CyclicNURBS_blender.init_nurbs_curve(curveData)
+#CyclicNURBS_blender.update_curve(curveData, nurbs_curve_ptr)
 
-CyclicNURBS_blender.init_poly_curve(curveData)
-nurbs_curve_ptr = CyclicNURBS_blender.init_nurbs_curve(curveData)
-CyclicNURBS_blender.update_curve(curveData, nurbs_curve_ptr)
+surfaceData = CyclicNURBS_data.SurfaceData()
+
+CyclicNURBS_blender.init_poly_surface(surfaceData)
+nurbs_surface_ptr = CyclicNURBS_blender.init_nurbs_surface(surfaceData)
+CyclicNURBS_blender.update_surface(surfaceData, nurbs_surface_ptr)
