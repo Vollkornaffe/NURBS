@@ -2,7 +2,7 @@ import bpy
 
 import CyclicNURBS_interface
 
-def init_poly(numControl = 4, numSamples = 1000):
+def init_poly_curve(numControl = 4, numSamples = 1000):
 
     if ("Control" in bpy.data.objects):
         bpy.data.objects.remove(bpy.data.objects["Control"])
@@ -17,6 +17,33 @@ def init_poly(numControl = 4, numSamples = 1000):
     bpy.context.object.name = "Control"
     bpy.context.object.data.name = "Control"
     bpy.ops.mesh.primitive_circle_add(vertices=numSamples, radius=1, enter_editmode=False, location=(0, 0, 0))
+    bpy.context.object.name = "Samples"
+    bpy.context.object.data.name = "Samples"
+
+def init_poly_surface(u_numControl = 4, v_numControl = 4, u_numSamples = 100, v_numSamples = 100):
+
+    if ("Control" in bpy.data.objects):
+        bpy.data.objects.remove(bpy.data.objects["Control"])
+    if ("Samples" in bpy.data.objects):
+        bpy.data.objects.remove(bpy.data.objects["Samples"])
+    if ("Control" in bpy.data.meshes):
+        bpy.data.meshes.remove(bpy.data.meshes["Control"])
+    if ("Samples" in bpy.data.meshes):
+        bpy.data.meshes.remove(bpy.data.meshes["Samples"])
+
+    bpy.ops.mesh.primitive_torus_add(major_segments=u_numControl, minor_segments=v_numControl, major_radius=2, minor_radius=1)
+    bpy.ops.object.editmode_toggle()
+    bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.mesh.delete(type='ONLY_FACE')
+    bpy.ops.object.editmode_toggle()
+    bpy.context.object.name = "Control"
+    bpy.context.object.data.name = "Control"
+
+    bpy.ops.mesh.primitive_torus_add(major_segments=u_numSamples, minor_segments=v_numSamples, major_radius=2, minor_radius=1)
+    bpy.ops.object.editmode_toggle()
+    bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.mesh.delete(type='ONLY_FACE')
+    bpy.ops.object.editmode_toggle()
     bpy.context.object.name = "Samples"
     bpy.context.object.data.name = "Samples"
 
