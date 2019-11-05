@@ -1,10 +1,17 @@
-degree = 3
-
 import bpy
-import sys
-import CircularNURBS_interface
+
+import CyclicNURBS_interface
 
 def init_poly(numControl = 4, numSamples = 1000):
+
+    if ("Control" in bpy.data.objects):
+        bpy.data.objects.remove(bpy.data.objects["Control"])
+    if ("Samples" in bpy.data.objects):
+        bpy.data.objects.remove(bpy.data.objects["Samples"])
+    if ("Control" in bpy.data.meshes):
+        bpy.data.meshes.remove(bpy.data.meshes["Control"])
+    if ("Samples" in bpy.data.meshes):
+        bpy.data.meshes.remove(bpy.data.meshes["Samples"])
 
     bpy.ops.mesh.primitive_circle_add(vertices=numControl, radius=1, enter_editmode=False, location=(0, 0, 0))
     bpy.context.object.name = "Control"
@@ -21,7 +28,7 @@ def init_nurbs(degree = 3):
     numControl = len(bpy.data.meshes['Control'].vertices)
     numSamples = len(bpy.data.meshes['Samples'].vertices)
 
-    return CircularNURBS_interface.CircularCurve(degree,numControl,numSamples)
+    return CyclicNURBS_interface.CircularCurve(degree, numControl, numSamples)
 
 def update(sc_ptr):
 

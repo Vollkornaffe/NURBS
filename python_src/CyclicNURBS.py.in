@@ -1,0 +1,17 @@
+import sys
+sys.path.append("@CMAKE_INSTALL_PREFIX@/CyclicNURBS")
+
+import CyclicNURBS_blender
+import CyclicNURBS_interface
+import CyclicNURBS_path
+
+from importlib import reload
+
+reload(CyclicNURBS_blender  )
+reload(CyclicNURBS_interface)
+reload(CyclicNURBS_path     )
+
+CyclicNURBS_blender.init_poly(10,1000)
+CyclicNURBS_blender.update(CyclicNURBS_blender.init_nurbs())
+
+print(CyclicNURBS_path.binary_path)
