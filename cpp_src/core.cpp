@@ -115,7 +115,7 @@ private:
   void compute_samples() {
 
     size_t i = 0;
-    double offset;
+    double offset = 0.0;
     std::vector<double> left(degree+1);
     std::vector<double> right(degree+1);
     std::vector<double> bases(degree+1);
@@ -201,9 +201,7 @@ private:
 
     size_t s = 0;
     size_t u_i = 0;
-    size_t v_i = 0;
-    double u_offset;
-    double v_offset;
+    double u_offset = 0.0;
     std::vector<double> u_left(u_degree+1);
     std::vector<double> v_left(v_degree+1);
     std::vector<double> u_right(u_degree+1);
@@ -218,6 +216,8 @@ private:
 
       compute_bases(u_intervals, u_degree, u_i, u_left, u_right, u_bases);
 
+      size_t v_i = 0;
+      double v_offset = 0.0;
       for (size_t v_s = 0; v_s < v_numSamples; v_s++) {
 
         double v_t = static_cast<double>(v_s)/static_cast<double>(v_numSamples);
