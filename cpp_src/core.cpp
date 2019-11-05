@@ -199,7 +199,6 @@ private:
   // Most of this algorithm is inspired by The NURBS Book, Algorithm A2.2
   void compute_samples() {
 
-  /*
     size_t s = 0;
     size_t u_i = 0;
     size_t v_i = 0;
@@ -215,30 +214,30 @@ private:
 
       double u_t = static_cast<double>(u_s)/static_cast<double>(u_numSamples);
 
-      advance(u_t, u_i, u_left, u_right);
+      advance(u_intervals, u_t, u_degree, u_i, u_offset, u_left, u_right);
 
-      compute_bases(u_i, u_left, u_right, u_bases);
+      compute_bases(u_intervals, u_degree, u_i, u_left, u_right, u_bases);
 
       for (size_t v_s = 0; v_s < v_numSamples; v_s++) {
 
         double v_t = static_cast<double>(v_s)/static_cast<double>(v_numSamples);
 
-        advance(v_t, v_i, v_left, v_right);
+        advance(v_intervals, v_t, v_degree, v_i, v_offset, v_left, v_right);
 
-        compute_bases(v_i, v_left, v_right, v_bases);
+        compute_bases(v_intervals, v_degree, v_i, v_left, v_right, v_bases);
 
-        samples[s] = Vector::Zero();
-        for (size_t u_j = 0; u_j <= degree; u_j++) {
-          for (size_t u_j = 0; u_j <= degree; u_j++) {
-            samples[s] += bases[j] * control[(int)i - (int)degree + (int)j];
+        uv_samples[s] = Vector::Zero();
+        for (size_t u_j = 0; u_j <= u_degree; u_j++) {
+          for (size_t v_j = 0; v_j <= v_degree; v_j++) {
+            int u_control_idx = (int)u_i - (int)u_degree + (int)u_j;
+            int v_control_idx = (int)v_i - (int)v_degree + (int)v_j;
+            uv_samples[s] += u_bases[u_j] * v_bases[v_j] * uv_control[u_control_idx][v_control_idx];
           }
         }
 
         s++;
       }
     }
-
-   */
   }
 
   size_t u_degree;
