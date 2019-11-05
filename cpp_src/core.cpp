@@ -20,9 +20,60 @@ struct CVector {
   inline T& operator[](int i) {
     return vector[modulo(i, vector.size())];
   }
+  inline T const& operator[](int i) const {
+    return vector[modulo(i, vector.size())];
+  }
 
   std::vector<T> vector;
 };
+
+inline void advance(
+  CVector<double> const & intervals,
+  double const & t,
+  size_t const & degree,
+  size_t & i,
+  double & offset,
+  std::vector<double> & left,
+  std::vector<double> & right
+) {
+
+  // advance interval if needed
+  // with safeguard against floating point errors
+  if (offset + intervals[i] < t && i < intervals.vector.size()-1) {
+    offset += intervals[i];
+    i++;
+  }
+
+  left[0] = t - offset - intervals[i];
+  right[0] = offset - t;
+  for (size_t j = 1; j < degree+1; j++) {
+    left[j] = left[j-1] + intervals[(int)i - (int)j + 1];
+    right[j] = right[j-1] + intervals[(int)i + (int)j - 1];
+  }
+
+}
+
+inline void compute_bases(
+  CVector<double> const & intervals,
+  size_t const & degree,
+  size_t const & i,
+  std::vector<double> const & left,
+  std::vector<double> const & right,
+  std::vector<double> & bases
+) {
+
+  bases[0] = 1.0;
+  for (size_t j = 1; j <= degree; j++) {
+    double saved = 0.0;
+    for (size_t r = 0; r < j; r++) {
+      double temp = bases[r] / (right[r+1] + left[j-r]);
+      bases[r] = saved + right[r+1] * temp;
+      saved = left[j-r] * temp;
+    }
+    bases[j] = saved;
+  }
+
+}
 
 class CyclicCurve {
 public:
@@ -60,50 +111,6 @@ public:
 
 private:
 
-  inline void advance(
-    double const & t,
-    size_t & i,
-    double & offset,
-    std::vector<double> & left,
-    std::vector<double> & right
-  ) {
-
-    // advance interval if needed
-    // with safeguard against floating point errors
-    if (offset + intervals[i] < t && i < numControl-1) {
-      offset += intervals[i];
-      i++;
-    }
-
-    left[0] = t - offset - intervals[i];
-    right[0] = offset - t;
-    for (size_t j = 1; j < degree+1; j++) {
-      left[j] = left[j-1] + intervals[(int)i - (int)j + 1];
-      right[j] = right[j-1] + intervals[(int)i + (int)j - 1];
-    }
-
-  }
-
-  inline void compute_bases(
-    size_t const & i,
-    std::vector<double> const & left,
-    std::vector<double> const & right,
-    std::vector<double> & bases
-  ) {
-
-    bases[0] = 1.0;
-    for (size_t j = 1; j <= degree; j++) {
-      double saved = 0.0;
-      for (size_t r = 0; r < j; r++) {
-        double temp = bases[r] / (right[r+1] + left[j-r]);
-        bases[r] = saved + right[r+1] * temp;
-        saved = left[j-r] * temp;
-      }
-      bases[j] = saved;
-    }
-
-  }
-
   // Most of this algorithm is inspired by The NURBS Book, Algorithm A2.2
   void compute_samples() {
 
@@ -117,9 +124,9 @@ private:
       // convert to parameter t
       double t = static_cast<double>(s)/static_cast<double>(numSamples);
 
-      advance(t, i, offset, left, right);
+      advance(intervals, t, degree, i, offset, left, right);
 
-      compute_bases(i, left, right, bases);
+      compute_bases(intervals, degree, i, left, right, bases);
 
       samples[s] = Vector::Zero();
       for (size_t j = 0; j <= degree; j++) {
@@ -180,51 +187,6 @@ class CyclicSurface {
 
 
 private:
-
-  inline void advance(
-    double const t,
-    CVector const & intervals,
-    size_t i,
-    double offset,
-    std::vector<double> & left,
-    std::vector<double> & right,
-  ) {
-
-    // advance interval if needed
-    // with safeguard against floating point errors
-    if (offset + intervals[i] < t && i < numControl-1) {
-      offset += intervals[i];
-      i++;
-    }
-
-    left[0] = t - offset - intervals[i];
-    right[0] = offset - t;
-    for (size_t j = 1; j < degree+1; j++) {
-      left[j] = left[j-1] + intervals[(int)i - (int)j + 1];
-      right[j] = right[j-1] + intervals[(int)i + (int)j - 1];
-    }
-
-  }
-
-  inline void compute_bases(
-    size_t const i,
-    std::vector<double> const & left,
-    std::vector<double> const & right,
-    std::vector<double> & bases
-  ) {
-
-    bases[0] = 1.0;
-    for (size_t j = 1; j <= degree; j++) {
-      double saved = 0.0;
-      for (size_t r = 0; r < j; r++) {
-        double temp = bases[r] / (right[r+1] + left[j-r]);
-        bases[r] = saved + right[r+1] * temp;
-        saved = left[j-r] * temp;
-      }
-      bases[j] = saved;
-    }
-
-  }
 
   // Most of this algorithm is inspired by The NURBS Book, Algorithm A2.2
   void compute_samples() {
